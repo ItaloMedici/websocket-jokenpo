@@ -1,0 +1,19 @@
+{
+  "name": "websocket-jokenpo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.ts",
+  "scripts": {
+    "start": "ts-node app.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ts-node": "^10.9.1",
+    "ws": "^8.10.0"
+  },
+  "devDependencies": {
+    "typescript": "^4.8.4",
+    "@types/ws": "^8.5.3"
+  }
+}
