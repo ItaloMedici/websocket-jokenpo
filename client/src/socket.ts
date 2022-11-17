@@ -1,5 +1,6 @@
+const ip = window.location.host.split(":")[0]
 
-export const ws = new WebSocket("ws://localhost:2121")
+export const ws = new WebSocket(`ws://${ip}:2121`)
 
 export enum WebSocketMethods {
   CONNECT = "connect",
@@ -38,7 +39,7 @@ type Room = {
 }
 
 export type Players = {
-  clientID: string, 
+  clientID: string,
   clientName: string,
   play?: Choices
 }

@@ -126,7 +126,7 @@ export class WebSocketController {
       }
     } else {
       const payLoad = {
-        method: WebSocketMethods.WATING_SECOND_PLAYER,
+        method: WebSocketMethods.WATING_SECOND_PLAYER,  
       }
       this.clients[clientID].connection.send(JSON.stringify(payLoad))
     }

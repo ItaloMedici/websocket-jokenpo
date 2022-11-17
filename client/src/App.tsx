@@ -1,5 +1,12 @@
 import { useState } from "react";
 import {
+  ArrowLeftOnRectangleIcon,
+  PlusIcon,
+  DocumentDuplicateIcon,
+} from "@heroicons/react/24/outline";
+import Button from "./components/Button";
+import Input from "./components/Input";
+import {
   Choices,
   Players,
   WebSocketMethods,
@@ -7,14 +14,19 @@ import {
   ws,
 } from "./socket";
 import { createRoom, joinRoom, play } from "./WebSocketService";
-export const choices: Choices[] = ["pedra", "papel", "tesoura"];
+
+export const choices: {choice: Choices, emoji: string}[] = [
+  {emoji: "✊", choice: "pedra"},
+  {emoji: "️️🖐️️", choice: "papel"},
+  {emoji: "✌", choice: "tesoura"},
+];
 
 function App() {
   const [clientID, setClientID] = useState("");
   const [roomID, setRoomID] = useState("");
   const [roomIDText, setRoomIDText] = useState("");
   const [players, setPlayers] = useState<Players[]>([]);
-  const [playerName, setPlayerName] = useState("italo");
+  const [playerName, setPlayerName] = useState<string>("");
   const [selectedPlay, setSelectedPlay] = useState<Choices>();
 
   ws.onmessage = (message) => {
@@ -33,14 +45,16 @@ function App() {
         break;
 
       case WebSocketMethods.JOIN:
-        console.log("Room Joined: " + response.room.id + ", player: " + response.clientID);
+        console.log(
+          "Room Joined: " + response.room.id + ", player: " + response.clientID
+        );
         setPlayers(response.room.players);
         setRoomID(response.room.id);
         break;
 
       case WebSocketMethods.RESULT:
         alert("Result: " + response.gameResult);
-        setSelectedPlay(undefined)
+        setSelectedPlay(undefined);
         break;
 
       case WebSocketMethods.WATING_SECOND_PLAYER:
@@ -49,12 +63,12 @@ function App() {
   };
 
   const handleNewRoom = () => {
-    if (clientID) createRoom(clientID);
+    if (clientID && playerName) createRoom(clientID);
   };
 
   const enterRoom = (event: any) => {
     event.preventDefault();
-    if (clientID) {
+    if (clientID && playerName) {
       joinRoom(clientID, playerName, roomIDText);
     }
   };
@@ -67,41 +81,70 @@ function App() {
   };
 
   return (
-    <>
-      <h2>sala: {roomID} {roomID && <button onClick={() => navigator.clipboard.writeText(roomID)}>Copiar ID</button>}</h2>
-      <input
-        placeholder="Digte seu nome"
-        value={playerName}
-        onChange={(e) => setPlayerName(e.target.value)}
-        required
-      />
-      <br />
-      <br />
-      <button onClick={handleNewRoom}>Criar sala</button><br/>
-      <input
-        disabled={!!roomID}
-        placeholder="Entrar na sala"
-        value={roomIDText}
-        onChange={(e) => setRoomIDText(e.target.value)}
-      />
-      <button onClick={enterRoom} disabled={!!roomID}>
-        Entrar
-      </button>
+    <main className="bg-primary h-screen px-72 py-16 flex flex-col gap-8">
+      <div className="flex gap-8 items-end justify-center">
+        <Input
+          label="Nome:"
+          placeholder="Digte seu nome"
+          value={playerName}
+          onChange={(e) => setPlayerName(e.target.value)}
+        />
+
+        <div className="flex gap-4 items-end">
+          <Input
+            label="Entrar em  uma sala: "
+            disabled={!!roomID}
+            placeholder="Digite o código..."
+            value={roomIDText}
+            onChange={(e) => setRoomIDText(e.target.value)}
+          />
+          <Button onClick={enterRoom} disabled={!!roomID}>
+            <ArrowLeftOnRectangleIcon className="h-6 w-6" aria-hidden="true" />
+            ENTRAR
+          </Button>
+        </div>
+        <Button onClick={handleNewRoom}>
+          <PlusIcon className="h-6 w-6" aria-hidden="true" strokeWidth={2} />
+          CRIAR NOVA SALA
+        </Button>
+      </div>
+
+      {roomID ? (
+        <>
+          <div className="flex items-center justify-center gap-6">
+            <span className="text-white opacity-70 text-lg font-bold">
+              Código Sala:{" "}
+            </span>
+            <h1 className="text-white text-lg font-black">{roomID}</h1>
+            <button
+              className="p-2 bg-primary200 rounded-md text-secondary transition-all hover:bg-primary300"
+              title="Copiar Código"
+              onClick={() =>  navigator.clipboard.writeText(roomID)}
+            >
+              <DocumentDuplicateIcon className="h-6 w-6" aria-hidden="true" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-3 gap-7 bg-primary400 p-8 rounded-lg">
+            {choices.map(({ choice, emoji }) => (
+              <button
+                className="h-60 w-full bg-primary200 rounded-lg text-white font-bold cursor-pointer"
+                onClick={() => handlePlay(choice)}
+                disabled={!!selectedPlay && selectedPlay !== choice}
+              >
+                <span className="text-9xl">{emoji}</span>
+              </button>
+            ))}
+          </div>
+        </>
+      ) : null}
+
       <h2>Players</h2>
       <ul>
         {players &&
           players.map((p) => <li key={p.clientID}>{p.clientName}</li>)}
       </ul>
-      <h2>JOGAR</h2>
-      {choices.map((c) => (
-        <button
-          onClick={() => handlePlay(c)}
-          disabled={!!selectedPlay && selectedPlay !== c}
-        >
-          {c}
-        </button>
-      ))}
-    </>
+    </main>
   );
 }
 
