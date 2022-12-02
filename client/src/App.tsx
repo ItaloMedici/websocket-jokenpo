@@ -81,8 +81,8 @@ function App() {
   };
 
   return (
-    <main className="bg-primary h-screen px-72 py-16 flex flex-col gap-8">
-      <div className="flex gap-8 items-end justify-center">
+    <main className="bg-primary h-screen px-52 py-16 flex flex-col gap-8 max-xl:px-14">
+      <div className="flex gap-8 items-end justify-center max-md:flex-col max-md:items-center">
         <Input
           label="Nome:"
           placeholder="Digte seu nome"
@@ -90,7 +90,7 @@ function App() {
           onChange={(e) => setPlayerName(e.target.value)}
         />
 
-        <div className="flex gap-4 items-end">
+        <div className="flex gap-4 items-end max-sm:items-center max-sm:flex-col">
           <Input
             label="Entrar em  uma sala: "
             disabled={!!roomID}
@@ -113,7 +113,7 @@ function App() {
         <>
           <div className="flex items-center justify-center gap-6">
             <span className="text-white opacity-70 text-lg font-bold">
-              Código Sala:{" "}
+              Código Sala:
             </span>
             <h1 className="text-white text-lg font-black">{roomID}</h1>
             <button
@@ -125,7 +125,7 @@ function App() {
             </button>
           </div>
 
-          <div className="grid grid-cols-3 gap-7 bg-primary400 p-8 rounded-lg">
+          <div className="grid grid-cols-3 gap-7 bg-primary400 p-8 rounded-lg max-md:grid-rows-3">
             {choices.map(({ choice, emoji }) => (
               <button
                 className="h-60 w-full bg-primary200 rounded-lg text-white font-bold cursor-pointer"

@@ -21,7 +21,6 @@ wsServer.on("connection", ws => {
         break;
       case WebSocketMethods.JOIN:
         controller.joinRoom(result)
-        console.log(result)
         break;
       case WebSocketMethods.PLAY:
         controller.play(result)
