@@ -93,8 +93,8 @@ export class WebSocketController {
       let winner;
       let scores = []
 
-      if (!room.players[0].score) room.players[0].score = 0
-      if (!room.players[1].score) room.players[1].score = 0
+      if (room.players[0].score === undefined) room.players[0].score = 0
+      if (room.players[1].score === undefined) room.players[1].score = 0
 
       if (player1.play === player2.play) {
         winner = -1

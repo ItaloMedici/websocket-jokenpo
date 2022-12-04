@@ -31,7 +31,7 @@ function App() {
   const [players, setPlayers] = useState<Players[]>([]);
   const [playerName, setPlayerName] = useState<string>("");
   const [selectedPlay, setSelectedPlay] = useState<Choices>();
-  const [scores, setScores] = useState<number[]>([0,0])
+  const [scores, setScores] = useState<number[]>([0, 0]);
 
   ws.onmessage = (message) => {
     const response = JSON.parse(message.data) as WebSocketResponse;
@@ -58,7 +58,7 @@ function App() {
         break;
 
       case WebSocketMethods.RESULT:
-        setScores(response.scores)
+        setScores(response.scores);
         if (response.winner === -1) {
           toast.custom((t) => <Toast variant="tie" visible={t.visible} />);
         } else if (response.winner === clientID) {
@@ -94,13 +94,14 @@ function App() {
   };
 
   return (
-    <main className="bg-primary h-screen px-52 py-8 justify-center flex flex-col gap-8 items-center max-xl:px-14">
+    <main className="px-52 py-8 justify-center flex flex-col gap-7 items-center max-xl:px-14">
       <div className="flex gap-8 items-end justify-center max-md:flex-col max-md:items-center">
         <Input
           label="Nome:"
           placeholder="Digte seu nome"
           value={playerName}
           onChange={(e) => setPlayerName(e.target.value)}
+          disabled={!!roomID}
         />
 
         <div className="flex gap-4 items-end max-sm:items-center max-sm:flex-col">
@@ -116,7 +117,7 @@ function App() {
             ENTRAR
           </Button>
         </div>
-        <Button onClick={handleNewRoom}>
+        <Button onClick={handleNewRoom} disabled={!!roomID}>
           <PlusIcon className="h-6 w-6" aria-hidden="true" strokeWidth={2} />
           CRIAR NOVA SALA
         </Button>
@@ -124,7 +125,7 @@ function App() {
 
       {roomID ? (
         <>
-          <div className="flex items-center justify-center gap-6">
+          <div className="flex items-center justify-center gap-6 max-sm:flex-col">
             <span className="text-white opacity-70 text-lg font-bold">
               Código Sala:
             </span>
@@ -138,30 +139,49 @@ function App() {
             </button>
           </div>
 
-          <div className="flex flex-col items-center justify-center w-3/6"> 
+          <div className="flex flex-col items-center justify-center w-3/6">
             <h3 className="bg-primary300 p-2 rounded-md px-20 py-2 w-full text-center text-white font-black">
               Adversários
             </h3>
-            <div className="flex flex-row gap-3 my-1 justify-between items-center w-full">
-              <h2 className="bg-primary200 p-2 rounded-md px-10 text-center  text-white font-semibold flex-1">
-                {scores && scores[0] + " pts - "}{players[0]?.clientName}
+            <div className="flex flex-row gap-3 my-1 justify-between items-center w-full max-[600px]:flex-col">
+              <h2 className="bg-primary200 p-2 rounded-md px-10 text-center  text-white font-semibold flex-1 max-[600px]:w-full">
+                {scores && scores[0] + " pts - "}
+                {players[0]?.clientName}
               </h2>
               <h2 className="text-primaryX text-xl font-bold mx-1">X</h2>
-              <h2 className="bg-primary200 p-2 rounded-md px-17 text-center text-white font-semibold flex-1">
-                {scores && scores[0] + " pts - "}{players[1]?.clientName ?? "vazio"}
+              <h2 className="bg-primary200 p-2 rounded-md px-17 text-center text-white font-semibold flex-1 max-[600px]:w-full">
+                {scores && scores[1] + " pts - "}
+                {players[1]?.clientName ?? "vazio"}
               </h2>
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-6 bg-primary400 p-7 rounded-lg max-md:grid-rows-3">
+          <div className="grid grid-cols-3 gap-5 bg-primary400 p-5 rounded-xl max-[600px]:grid-rows-2 max-[600px]:grid-cols-2">
             {choices.map(({ choice, emoji }) => (
               <button
-                className="h-52 w-52 bg-primary200 rounded-lg text-white font-bold cursor-pointer"
+                className="
+                  group
+                  h-40 w-40 bg-primary200 rounded-lg text-white font-bold cursor-pointer
+                  max-sm:h-32 max-sm:w-32
+                  transition delay-75 duration-300
+                  disabled:bg-primary300 disabled:cursor-default
+                "
                 onClick={() => handlePlay(choice)}
                 disabled={!!selectedPlay && selectedPlay !== choice}
               >
-                <Emoji className="m-auto" name={emoji} width={100} />
-                {/* <span className="text-9xl">{emoji}</span> */}
+                <Emoji className="m-auto" name={emoji} width={80} />
+                <div
+                  className="
+                    text-md font-bold 
+                    transition-all delay-75 duration-300
+                    h-0 overflow-hidden
+                    opacity-90
+                    tracking-wider
+                    group-hover:h-6 group-hover:mt-2
+                  "
+                >
+                  {choice.toUpperCase()}
+                </div>
               </button>
             ))}
           </div>

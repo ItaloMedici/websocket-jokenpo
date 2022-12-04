@@ -1,8 +1,5 @@
 import React from "react";
 import Emoji from "react-apple-emojis/dist/Emoji";
-import { Toaster } from "react-hot-toast";
-
-// import { Container } from './styles';
 
 type ToastProps = {
   variant: "winner" | "loser" | "wating" | "play" | "tie";
@@ -32,7 +29,7 @@ const Toast: React.FC<ToastProps> = ({ variant, visible }) => {
       color: "bg-makePlay",
     },
     tie: {
-      emoji: "face-with-diagonal-mouth",
+      emoji: "neutral-face",
       label: "Empate!",
       color: "bg-tie",
     },
@@ -42,12 +39,12 @@ const Toast: React.FC<ToastProps> = ({ variant, visible }) => {
     <div
       className={`${visible ? "animate-enter" : "animate-leave"} ${
         getVariant[variant].color
-      } flex items-center rounded-xl p-3 gap-4 transition-all duration-5000 shadow-lg `}
+      } flex items-center rounded-lg p-2 gap-3 transition-all duration-5000 shadow-lg `}
     >
-      <div className="rounded-xl bg-white60 flex items-center justify-center p-2">
-        <Emoji name={getVariant[variant].emoji} width={34} />
+      <div className="rounded-lg bg-white60 flex items-center justify-center p-1">
+        <Emoji name={getVariant[variant].emoji} width={24} />
       </div>
-      <span className="text-xl font-black text-white">
+      <span className="text-lg font-bold text-white mr-1">
         {getVariant[variant].label}
       </span>
     </div>
