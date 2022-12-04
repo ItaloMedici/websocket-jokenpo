@@ -51,7 +51,7 @@ export class WebSocketController {
     const room = this.rooms[roomID];
 
     if (!room?.players || room?.players?.length >= 2) {
-      console.debug("room players", room?.players )
+      console.debug("room players", room?.players)
       return;
     }
 
@@ -85,38 +85,52 @@ export class WebSocketController {
       player.play = choice;
     }
 
-    let allPlayersHadPlayed = room.players.every(p => p.play)
+    let allPlayersHadPlayed = room.players.length === 2 && room.players.every(p => p.play)
 
     if (allPlayersHadPlayed) {
-      let gameResult = "";
-      let player1 = room.players[0].play;
-      let player2 = room.players[1].play;
+      let player1 = room.players[0];
+      let player2 = room.players[1];
+      let winner;
+      let scores = []
 
-      if (player1 === player2) {
-        gameResult = "Empate"
-      } else if (player1 === "pedra") {
-        if (player2 === "papel")
-          gameResult = "Papel ganhou!"
-        else
-          gameResult = "Pedra ganhou!"
+      if (!room.players[0].score) room.players[0].score = 0
+      if (!room.players[1].score) room.players[1].score = 0
 
-      } else if (player1 === "tesoura") {
-        if (player2 === "pedra")
-          gameResult = "Pedra ganhou!"
-        else
-          gameResult = "Tesoura ganhou!"
-
-      } else if (player1 === "papel") {
-        if (player2 === "tesoura")
-          gameResult = "Tesoura ganhou!"
-        else
-          gameResult = "Papel ganhou!"
+      if (player1.play === player2.play) {
+        winner = -1
+      } else if (player1.play === "pedra") {
+        if (player2.play === "papel") {
+          winner = room.players[1].clientID
+          room.players[1].score++;
+        } else {
+          winner = room.players[0].clientID
+          room.players[0].score++;
+        }
+      } else if (player1.play === "tesoura") {
+        if (player2.play === "pedra") {
+          winner = room.players[1].clientID
+          room.players[1].score++;
+        } else {
+          winner = room.players[0].clientID
+          room.players[0].score++;
+        }
+      } else if (player1.play === "papel") {
+        if (player2.play === "tesoura") {
+          winner = room.players[1].clientID
+          room.players[1].score++;
+        } else {
+          winner = room.players[0].clientID
+          room.players[0].score++;
+        }
       }
 
-      if (gameResult) {
+      scores = [ room.players[0].score, room.players[1].score ]
+
+      if (winner !== undefined) {
         const payLoad = {
           method: WebSocketMethods.RESULT,
-          gameResult
+          winner,
+          scores
         }
 
         room.players.forEach(c => {
@@ -126,7 +140,7 @@ export class WebSocketController {
       }
     } else {
       const payLoad = {
-        method: WebSocketMethods.WATING_SECOND_PLAYER,  
+        method: WebSocketMethods.WATING_SECOND_PLAYER,
       }
       this.clients[clientID].connection.send(JSON.stringify(payLoad))
     }

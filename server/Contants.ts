@@ -39,6 +39,7 @@ export type Players = {
   clientID: string, 
   clientName: string,
   play?: Choices
+  score?: number
 }
 
 export type Choices = "pedra" | "papel" | "tesoura"

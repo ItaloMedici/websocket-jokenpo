@@ -17,8 +17,9 @@ export type WebSocketResponse = {
   clientName: string;
   roomID: string,
   room: Room,
-  gameResult: string,
+  winner: string|number,
   choice?: Choices
+  scores: number[]
 }
 
 export type Clients = {
